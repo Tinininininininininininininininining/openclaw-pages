@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+<title>风火山林 v1.56 试玩 · 4 职业差异化属性 · 时序 1-20 + 复活队列</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#1a1a2e;color:#eee;padding:8px;font-size:13px}
+
+h1{text-align:center;color:#f0a500;font-size:18px;margin-bottom:2px}
+.sub{text-align:center;color:#888;font-size:10px;margin-bottom:8px}
+.box{background:#16213e;border-radius:6px;padding:10px;margin-bottom:8px}
+.t{color:#f0a500;font-size:13px;font-weight:bold;margin-bottom:6px;border-bottom:1px solid #333;padding-bottom:3px}
+.dn{display:flex;align-items:center;gap:5px;padding:5px 8px;background:#0a0a1a;border-radius:4px;font-size:11px;margin-bottom:6px}
+.bf{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;background:#0a0a1a;border-radius:6px;padding:8px;margin-bottom:8px;min-height:200px}
+
+.sd{display:flex;flex-direction:column;gap:5px}
+.rl{font-size:9px;color:#888;text-align:center;margin-bottom:1px}
+.u{border:2px solid;border-radius:3px;padding:4px 6px;cursor:pointer;min-height:50px;background:#1a2533}
+.u.r{border-color:#e94560;background:#2a1a25}
+.u.b{border-color:#4a90e2;background:#1a2533}
+.u.dead{opacity:.3;filter:grayscale(.8)}
+.u.silence{box-shadow:0 0 0 2px #ff9800}
+.u.chaos{box-shadow:0 0 0 2px #e91e63;animation:cs 2s infinite}
+.u.sleep{box-shadow:0 0 0 2px #9c27b0}
+.u.act{border-width:3px;animation:gl 1s infinite alternate}
+@keyframes gl{from{box-shadow:0 0 3px #f0a500}to{box-shadow:0 0 12px #f0a500}}
+@keyframes cs{0%,100%{box-shadow:0 0 0 2px #e91e63}50%{box-shadow:0 0 0 4px #e91e63}}
+.uh{display:flex;justify-content:space-between;align-items:center;font-size:10px;margin-bottom:2px}
+.un{font-weight:bold;font-size:10px}
+.u.r .un{color:#ff6b7a}.u.b .un{color:#6bb6ff}
+.uo{background:#f0a500;color:#000;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:bold}
+.uo.i{background:#555;color:#888}
+.up{background:#2196f3;color:#000;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:bold;margin-left:2px}
+.hp{width:100%;height:11px;background:#333;border-radius:2px;overflow:hidden;margin:1px 0}
+.hf{height:100%;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:bold}
+.hf.h{background:#4caf50}.hf.m{background:#ff9800}.hf.l{background:#f44336}
+.at{display:flex;gap:2px;font-size:8px;flex-wrap:wrap;margin-top:1px}
+.a{background:#0a0a1a;padding:0 2px;border-radius:1px}
+.a.s{color:#ff6b6b}.a.i{color:#9c27b0}.a.st{color:#4caf50}.a.ag{color:#ffeb3b}
+.sk{font-size:8px;margin-top:1px;padding:1px 2px;background:#1a1a2e;border-radius:1px;color:#aaa}
+.sk.r{color:#ce93d8;background:#2a1a2a}
+.sp{display:flex;gap:2px;flex-wrap:wrap;margin-top:3px}
+.sb{padding:3px 4px;background:#0f3460;color:#fff;border:1px solid #2c5aa0;border-radius:2px;cursor:pointer;font-size:9px;flex:1;min-width:40px}
+.sb:hover{background:#2c5aa0}
+.sb.sel{background:#f0a500;color:#000;border-color:#f0a500}
+.btn{padding:6px 12px;background:#f0a500;color:#000;border:none;border-radius:3px;cursor:pointer;font-weight:bold;font-size:11px;margin-right:4px}
+.btn:hover{background:#ffb700}
+.btn.s{background:#0f3460;color:#fff}.btn.s:hover{background:#2c5aa0}
+.btn.d{background:#d32f2f;color:#fff}.btn.d:hover{background:#f44336}
+.ctrls{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.lg{background:#0a0a1a;border-radius:6px;padding:8px;height:200px;overflow-y:auto;font-family:"Courier New",monospace;font-size:10px;line-height:1.3}
+.le{padding:0}
+.lt{color:#f0a500;font-weight:bold;margin-top:3px;border-top:1px solid #333;padding-top:2px}
+.lp{color:#4a90e2;font-weight:bold;margin-top:2px}
+.ld{color:#ff6b6b}.lh{color:#51cf66}.ls{color:#888;font-style:italic}
+.lw{color:#ffd700;font-weight:bold;font-size:13px}
+.lsk{color:#ce93d8}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+.sbx{padding:4px;background:#0a0a1a;border-radius:3px;font-size:10px}
+.sbx.r{border-left:3px solid #e94560}.sbx.b{border-left:3px solid #4a90e2}
+.mo{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:1000}
+.mb{background:#16213e;border-radius:6px;padding:12px;max-width:400px;max-height:75vh;overflow-y:auto}
+.mb h3{color:#f0a500;margin-bottom:8px;font-size:13px}
+.tl{display:flex;flex-direction:column;gap:3px;margin:6px 0;max-height:50vh;overflow-y:auto}
+.tb{padding:5px;background:#0f3460;color:#fff;border:1px solid #2c5aa0;border-radius:3px;cursor:pointer;text-align:left;font-size:11px}
+.tb:hover{background:#2c5aa0}
+.si{font-size:8px;padding:0 3px;border-radius:2px;background:#555;color:#fff;display:inline-block;margin-right:2px}
+.si.silence{background:#ff9800}.si.chaos{background:#e91e63}.si.sleep{background:#9c27b0}
+.si.shield{background:#2196f3}
+.lab{background:#f0a500;color:#000;padding:1px 4px;border-radius:2px;font-size:9px;font-weight:bold;margin-right:3px}
+/* === 响应式 + 弹窗卡牌样式 (v4) === */
+.sk-card{display:flex;flex-direction:column;background:linear-gradient(180deg,#1a1a2e 0%,#0a0a1a 100%);border:2px solid #2c5aa0;border-radius:8px;width:200px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}
+.sk-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(240,165,0,.4);border-color:#f0a500}
+.sk-card.sel{border-color:#f0a500;box-shadow:0 0 20px #f0a500}
+.sk-card[data-cls="physical"]{border-color:#e94560}
+.sk-card[data-cls="physical"] .sk-type{background:#e94560}
+.sk-card[data-cls="magical"]{border-color:#ff6b35}
+.sk-card[data-cls="magical"] .sk-type{background:#ff6b35}
+.sk-card[data-cls="heal"]{border-color:#4caf50}
+.sk-card[data-cls="heal"] .sk-type{background:#4caf50}
+.sk-card[data-cls="seal"]{border-color:#2196f3}
+.sk-card[data-cls="seal"] .sk-type{background:#2196f3}
+.sk-card[data-cls="defend"]{border-color:#9c27b0}
+.sk-card[data-cls="defend"] .sk-type{background:#9c27b0}
+.sk-type{padding:6px 10px;color:#fff;font-size:11px;font-weight:bold;letter-spacing:1px;text-align:center}
+.sk-name{font-size:20px;font-weight:bold;color:#f0a500;padding:14px 10px 6px;text-align:center}
+.sk-rng{font-size:12px;color:#aaa;padding:0 10px 4px;text-align:center}
+.sk-dmg{font-size:18px;font-weight:bold;color:#ff6b6b;padding:6px 10px;text-align:center;background:rgba(255,107,107,.1);margin:0 8px;border-radius:4px}
+.sk-card[data-cls="heal"] .sk-dmg{color:#51cf66;background:rgba(81,207,102,.1)}
+.sk-card[data-cls="seal"] .sk-dmg{color:#ce93d8;background:rgba(206,147,216,.1)}
+.sk-seal-info{font-size:11px;color:#ce93d8;padding:4px 10px;text-align:center;font-weight:bold}
+.sk-desc{font-size:11px;color:#888;padding:8px 10px;text-align:center;font-style:italic;border-top:1px solid #333;margin-top:auto}
+.sk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:16px;width:100%;max-width:720px}
+.sk-modal{padding:0;max-width:760px;width:95%;background:#16213e;border-radius:8px;overflow:hidden}
+.sk-modal h3{background:#0f3460;color:#f0a500;margin:0;padding:12px 16px;font-size:14px;border-bottom:2px solid #f0a500}
+.sk-modal-info{padding:8px 16px;color:#aaa;font-size:11px;border-bottom:1px solid #333}
+.mo-close{position:absolute;top:8px;right:12px;background:transparent;border:1px solid #f0a500;color:#f0a500;font-size:18px;width:32px;height:32px;border-radius:50%;cursor:pointer;z-index:10;line-height:1}
+.mo-close:hover{background:#f0a500;color:#000}
+/* v5：选目标模式 — 合法目标高亮 */
+.u.target-ok{cursor:pointer;box-shadow:0 0 12px #f0a500;border:2px solid #f0a500;animation:pulse 1.2s infinite}
+.u.target-self{cursor:pointer;opacity:.7;border:2px dashed #888}
+/* v1.54：属性最高项高亮 */
+.a.max{background:#f0a500;color:#000;font-weight:bold;border-radius:3px;padding:0 2px}
+/* v1.54：顺序号 + 位置号双标识 */
+.order-bar{background:#16213e;border:1px solid #2c5aa0;border-radius:4px;padding:6px 10px;margin:6px 0;font-size:11px;color:#aaa;line-height:1.6}
+.order-bar .ord-item{display:inline-block;padding:1px 4px;margin:1px;border-radius:3px;font-family:monospace}
+.order-bar .ord-item.done{opacity:.4;text-decoration:line-through}
+.order-bar .ord-item.cur{background:#f0a500;color:#000;font-weight:bold}
+.order-bar .ord-item.future{background:#0f3460;color:#aaa}
+.badge{display:inline-flex;gap:3px;align-items:center}
+.uo{background:#0f3460;color:#f0a500;padding:1px 5px;border-radius:3px;font-size:11px;font-weight:bold;font-family:monospace;min-width:24px;text-align:center}
+.uo.i{background:#333;color:#888}        /* 未排序 */
+.uo.set{background:#16213e;color:#aaa}   /* 已排好但非当前 */
+.uo.cur{background:#f0a500;color:#000;animation:pulse 1s infinite}  /* 当前轮出手 */
+.up{background:#2a1a2a;color:#ce93d8;padding:1px 4px;border-radius:3px;font-size:9px}
+@keyframes pulse{0%,100%{box-shadow:0 0 8px #f0a500}50%{box-shadow:0 0 18px #ffeb3b}}
+
+/* === 响应式 === */
+@media (max-width: 768px) {
+  body{padding:4px;font-size:12px}
+  h1{font-size:14px}
+  .sub{font-size:9px}
+  .box{padding:6px;margin-bottom:4px}
+  .t{font-size:11px;margin-bottom:3px;padding-bottom:2px}
+  .bf{grid-template-columns:1fr 1fr;gap:2px;padding:4px;min-height:0}
+  .bf>.sd:nth-child(3),.bf>.sd:nth-child(4){order:10}
+  .u{min-height:60px;padding:3px 4px}
+  .uh{font-size:9px;flex-wrap:wrap;gap:2px}
+  .un{font-size:9px}
+  .uo,.up{width:13px;height:13px;font-size:8px}
+  .hp{height:9px;font-size:7px}
+  .at{font-size:7px}
+  .sk{font-size:7px}
+  .sk-card{width:30vw;min-width:90px}
+  .sk-name{font-size:16px}
+  .sk-dmg{font-size:14px}
+  .sk-rng,.sk-desc{font-size:10px}
+  .sk-modal{width:96%;max-width:none}
+  .sk-grid{grid-template-columns:repeat(3,1fr);gap:6px;padding:8px}
+  .lg{height:140px;font-size:9px}
+  .ctrls{flex-direction:column;align-items:stretch}
+  .btn{width:100%;margin:2px 0;font-size:10px;padding:5px 8px}
+  .r2{grid-template-columns:1fr}
+  .sbx{font-size:9px}
+  .dn{font-size:10px;flex-wrap:wrap}
+}
+@media (max-width: 480px) {
+  .sk-card{width:28vw;min-width:75px}
+  .sk-name{font-size:13px}
+  .sk-type{font-size:9px;padding:4px 6px}
+  .sk-dmg{font-size:12px;padding:4px 6px}
+}
+
+</style>
+</head>
+<body>
+<h1>⚔️ 风火山林 v1.56 试玩 · 4 职业差异化属性 · 时序 1-20 + 复活队列</h1>
+<div class="sub">v1.56 规则：时序 1-20 · 昏厥跳过不消失 · 复活者追加到 20 后（按原顺序） · <span id="dnT">☀️ 昼</span> · <span id="rN">1</span>回合 · 阶段: <span id="curP">规划</span> · <span id="curOrd">当前: -</span></div>
+<div class="order-bar" id="orderBar">出手顺序：<span id="orderList">--</span></div>
+
+<div class="dn">
+<span>第<strong id="rN2">1</strong>回合 · 阶段: <strong id="curP">规划</strong></span>
+<span style="margin-left:auto">💡 点卡 → 选技能 → 点目标 · 看数字属性 + 出手顺序</span>
+</div>
+
+<div class="bf" id="bf"></div>
+
+<div class="box">
+<div class="t">🎮 控制台</div>
+<div class="ctrls">
+<button class="btn" onclick="newGame()">🔄 重新开始</button>
+<button class="btn s" onclick="autoNext()">⚡ 自动打完一局</button>
+<button class="btn s" onclick="exportLog()">📋 复制日志</button>
+</div>
+</div>
+
+<div class="box">
+<div class="t">📊 战况</div>
+<div class="r2" id="bs"></div>
+</div>
+
+<div class="box">
+<div class="t">📜 日志</div>
+<div class="lg" id="log"></div>
+</div>
+
+<div id="mo" onclick="if(event.target===this){this.innerHTML='';cancelPending();}"></div>
+
+<script>
+// ============= v1.54 数值表（4 职业差异化属性 + 排序）=============
+const CLS = {physical:{n:'物理·风'}, magical:{n:'法术·火'}, heal:{n:'治疗·山'}, seal:{n:'封印·林'}};
+const PT = {physical:{n:'物攻宠'}, magical:{n:'法攻宠'}, heal:{n:'治疗宠'}, seal:{n:'封印宠'}, defend:{n:'防御宠'}};
+
+// v1.54 拍板：4 职业差异化五维属性（力/智/体/敏/耐）
+// 角色 / 召唤兽 共用同一套（防御宠特殊：高体低敏）
+// 设计原则：职业特色鲜明（物理高力、法术高智、治疗高体、封印高敏）
+const STAT = {
+  physical: {str:13, int:7,  sta:10, agi:10, end:10},  // 物理·风：高力，脆皮
+  magical:  {str:7,  int:15, sta:10, agi:8,  end:10},  // 法术·火：超高智，慢出手
+  heal:     {str:7,  int:8,  sta:12, agi:11, end:12},  // 治疗·山：体高，敏中
+  seal:     {str:7,  int:7,  sta:12, agi:12, end:12},  // 封印·林：体敏都高
+  defend:   {str:12, int:8,  sta:14, agi:8,  end:14}   // 防御宠：高体高耐低敏
+};
+
+// 角色技能（+2 数值版）
+const SK_R = {
+  physical: [
+    {n:'单攻', d:'1 目标 +2 物理', tgt:'es', typ:'p', dmg:2},
+    {n:'群攻', d:'1指定+2随机 +1 物理', tgt:'ea', typ:'p', dmg:1},
+    {n:'单三攻', d:'1 目标 ×3 次 +1/次', tgt:'es', typ:'p', dmg:1, hit:3}
+  ],
+  magical: [
+    {n:'单法', d:'1 目标 +2 法术', tgt:'es', typ:'m', dmg:2},
+    {n:'群法', d:'1指定+3随机 +1 法术', tgt:'ea', typ:'m', dmg:1},
+    {n:'单三法', d:'1 目标 ×3 次 +1/次', tgt:'es', typ:'m', dmg:1, hit:3}
+  ],
+  heal: [
+    {n:'单治', d:'1 友方 +2 体力', tgt:'as', typ:'h', amt:2},
+    {n:'群治', d:'1指定+3随机 +1（跳满血）', tgt:'aa', typ:'h', amt:1},
+    {n:'单三治', d:'1 友方 ×3 次 +1/次', tgt:'as', typ:'h', amt:1, hit:3}
+  ],
+  seal: [
+    {n:'单封', d:'沉默 1 回合', tgt:'es', typ:'s', dur:1, kind:'silence'},
+    {n:'群封', d:'1指定+2随机 沉默 1 回合', tgt:'ea', typ:'s', dur:1, kind:'silence'},
+    {n:'单封三', d:'混乱 3 回合', tgt:'es', typ:'s', dur:3, kind:'chaos'}
+  ]
+};
+
+// 召唤兽技能（+1 数值版，角色 50%）— v5 数组化，每个召唤兽也是 sk:[{...}]
+const SK_P = {
+  physical: [{n:'单攻', d:'1 目标 +1 物理', typ:'p', dmg:1, tgt:'es'}],
+  magical:  [{n:'单法', d:'1 目标 +1 法术', typ:'m', dmg:1, tgt:'es'}],
+  heal:     [{n:'单奶', d:'1 友方 +1 体力', typ:'h', amt:1, tgt:'as'}],
+  seal:     [{n:'单封', d:'沉默 1 回合', typ:'s', dur:1, kind:'silence', tgt:'es'}],
+  defend:   [{n:'单护', d:'1 友方 +2 护盾', typ:'d', amt:2, tgt:'as'}]
+};
+
+// ============= 状态 =============
+// dn = 'day' | 'night'
+// u.sealType = 'silence' | 'chaos' | 'sleep'
+// u.tzMarks = [{type:'day'|'night', kind:'silence'|'chaos'|'sleep'|'adjust'}]
+// u.chaos = 剩余混乱自动攻击次数（每个大轮结算时触发）
+let S = {phase:'plan', round:1, dn:'day', us:[], or:[], resQ:[], pending:null};
+
+function uid(){return Math.random().toString(36).slice(2,8);}
+function log(t,x){
+  const e=document.getElementById('log'),d=document.createElement('div');
+  d.className='le '+t;d.textContent=x;e.appendChild(d);e.scrollTop=e.scrollHeight;
+}
+
+// d2 骰（v1.52 §3.2 拍板）
+function d2(){return Math.random()<.5?'red':'blue';}
+
+function makeU(s,p,ty,o={}){
+  const ic=ty==='char';
+  let cl,pt;
+  if(ic){
+    const roleMap = ['physical','physical','magical','heal','seal'];
+    cl = roleMap[p%5];
+  } else {
+    pt = ['physical','magical','heal','seal','defend'][p%5];
+  }
+  // v1.54 差异化属性：角色走 CLS[cl] 对应，召唤兽走 PT[pt] 对应
+  const a = ic ? {...STAT[cl]} : {...STAT[pt]};
+  const nm = ic ? `${s==='r'?'红':'蓝'}角${p+1}·${CLS[cl].n}` : `${s==='r'?'红':'蓝'}兽${p+1}·${PT[pt].n}`;
+  return {
+    id:uid(), s, p, ip:!ic, cl, pt, nm,
+    hp:50, mhp:50, at:a,  // v1.54：HP 暂保持 50（v1.55+ 按 sta*5 重算）
+    sl:0, sh:0, ch:null, tgt:null, alive:true,
+    sealType:null,  // 'silence' | 'chaos' | 'sleep' | null
+    tzMarks:[],     // 昼夜标记堆叠
+    position:p,     // 修复 7：位置 1-5 标识
+    sk:ic?SK_R[cl]:SK_P[pt]
+  };
+}
+
+function newGame(){
+  S.phase='plan';S.round=1;S.dn='day';S.us=[];S.or=[];S.resQ=[];S.pending=null;S._origOrder=[];
+  for(let s of['b','r']) for(let i=0;i<5;i++){
+    S.us.push(makeU(s,i,'char'));
+    S.us.push(makeU(s,i,'pet'));
+  }
+  document.getElementById('log').innerHTML='';
+  log('lt','=== 新游戏 v1.55 · 顺序只排 1 次 · 复活入末 ===');
+  log('ls','  物13/智7 法7/智15 治7/8 封7/7 · 召唤兽同属性 · 防御宠12/8/14/8/14');
+  log('ls','  修复：昼夜/调息/混乱/睡眠/d2骰/d10算法/位置/召唤兽属性');
+  log('ls','  节奏目标：20-25 回合分胜负');
+  log('ls','');
+  log('ls','🎮 玩法：');
+  log('ls','  1. 点角色卡 → 弹窗选卡牌技能（暗扣）');
+  log('ls','  2. 双方都选完 → 自动按顺序结算');
+  log('ls','  3. 选目标 → 看伤害/治疗/封印日志');
+  log('ls','');
+  log('ls','⚡ 想跳过手动？点「自动打完一局」');
+  doSort();
+  render();
+}
+
+// v1.54：d2 骰（同敏捷时跨阵营投 d2）+ 差异化属性自动产生敏捷阶梯
+// v1.56 记一下排序后的原始顺序（供 resQ 排序用）
+function doSort(){
+  const al = S.us.filter(u=>u.alive);
+  // 按敏捷分组
+  al.sort((a,b) => b.at.agi - a.at.agi);
+  const res = [];
+  let i = 0;
+  while(i < al.length){
+    let j = i;
+    while(j < al.length && al[j].at.agi === al[i].at.agi) j++;
+    const g = al.slice(i, j);
+    if(g.length === 1){
+      res.push(g[0]);
+    } else {
+      // 同敏捷分组
+      const reds = g.filter(u => u.s === 'r').sort((a,b) => a.position - b.position);
+      const blues = g.filter(u => u.s === 'b').sort((a,b) => a.position - b.position);
+      if(reds.length && blues.length){
+        // 跨阵营，投 d2
+        const w = d2();
+        if(w === 'red'){
+          res.push(...reds, ...blues);
+          log('ls',`敏${g[0].at.agi}平局：d2 → 红先`);
+        } else {
+          res.push(...blues, ...reds);
+          log('ls',`敏${g[0].at.agi}平局：d2 → 蓝先`);
+        }
+      } else {
+        res.push(...g.sort((a,b) => a.position - b.position));
+      }
+    }
+    i = j;
+  }
+  // v1.55：S.or 改为 ID 数组（方便 splice/push）
+  S.or = res.map(u => u.id);
+  S._origOrder = S.or.slice();  // 记录本局初始顺序（复活者按此排）
+  // v1.55：排序后输出紧凑列表
+  const summary = res.map((u,i)=> `${i+1}.${u.nm}(敏${u.at.agi})`).join(' → ');
+  log('lp',`出手顺序（共 ${res.length} 步）：${summary}`);
+  log('lp','═══ ② 排序（ALT 敏捷混排 + d2 骰）═══');
+  log('ls','顺序: '+res.map((u,i)=>`${i+1}.${u.nm}(敏${u.at.agi}, 位${u.position+1})`).join(' → '));
+  S.phase = 'plan';
+}
+
+// 修复 7：单位卡显示"位 X"和"顺序 X"
+function render(){
+  const bf=document.getElementById('bf');bf.innerHTML='';
+  const mkU=u=>{
+    const d=document.createElement('div');
+    // 修复 6：封印类型用不同 class
+    let sealClass = '';
+    if(u.sl > 0){
+      if(u.sealType === 'chaos') sealClass = 'chaos';
+      else if(u.sealType === 'sleep') sealClass = 'sleep';
+      else sealClass = 'silence';
+    }
+    d.className=`u ${u.s==='r'?'r':'b'}${!u.alive?' dead':''}${sealClass?' '+sealClass:''}${S.phase==='resolve'&&S.or[S.ci]===u.id?' act':''}`;
+    const oi=S.or.indexOf(u.id);const o=oi>=0?oi+1:'-';
+    const a=u.at;
+    // v1.54：属性高亮最高项，特色鲜明
+    const maxStat = Object.entries(a).sort((x,y)=>y[1]-x[1])[0][0];
+    const aH=attr=>maxStat===attr?' max':'';
+    // v1.54 差异化属性显示（5 维全显，最高项加亮色）
+    const ah=`<span class="a s${aH('str')}">力${a.str}</span><span class="a i${aH('int')}">智${a.int}</span><span class="a st${aH('sta')}">体${a.sta}</span><span class="a ag${aH('agi')}">敏${a.agi}</span><span class="a e${aH('end')}">耐${a.end}</span>`;
+    let st='';
+    if(u.sl>0) st+=`<span class="si ${u.sealType||'silence'}">${u.sealType==='chaos'?'混乱':u.sealType==='sleep'?'睡眠':'沉默'}${u.sl}</span>`;
+    if(u.sh>0) st+=`<span class="si shield">盾${u.sh}</span>`;
+    const hp=Math.max(0,u.hp);const pct=hp/u.mhp*100;const hc=pct>60?'h':pct>30?'m':'l';
+    let sk='';
+    if(u.ch!==null&&u.alive){
+      if(S.phase==='plan') sk=`<div class="sk" style="background:#1a1a2e;padding:4px;border:1px dashed #f0a500;border-radius:3px">🂠 已暗扣（等揭晓）</div>`;
+      else if(S.phase==='resolve'){
+        const s=u.sk[u.ch]||u.sk;
+        if(s) sk=`<div class="sk r" style="background:#2a1a2a;padding:4px;border:1px solid #ce93d8;border-radius:3px">▶ ${s.n||'?'}</div>`;
+      }
+    }
+    // 修复 7：单位卡显示"位 X"和"顺序 X"双标识
+    // v1.54 排序双标识：左上角大号顺序号（○1-20）+ 位置号（位1-5）
+    const oBg = oi>=0 && oi===S.ci ? ' cur' : (oi>=0 ? ' set' : ' i');
+    d.innerHTML=`<div class="uh"><span class="un">${u.nm}</span><span class="badge"><span class="uo${oBg}">○${o}</span><span class="up">位${u.position+1}</span></span></div><div class="hp"><div class="hf ${hc}" style="width:${pct}%">${hp}/${u.mhp}</div></div><div class="at">${ah}</div><div>${st}</div>${sk}`;
+    if(S.phase==='plan'&&u.alive&&u.ch===null){
+      // v5：角色 + 召唤兽都走点卡选技能
+      d.style.cursor='pointer';
+      d.onclick=ev=>{ev.stopPropagation();openSkillModal(u.id);};
+    }
+    // v5：选目标模式——给所有合法目标加高亮 + 点击回调
+    if(S.phase==='plan' && S.pending && u.alive){
+      const {uid, sk} = S.pending;
+      const cu = S.us.find(x=>x.id===uid);
+      if(cu && cu.id !== u.id){
+        const wantEnemy = sk.tgt[0] === 'e';
+        const isEnemy = u.s !== cu.s;
+        const ok = wantEnemy ? isEnemy : !isEnemy;
+        if(ok){
+          d.classList.add('target-ok');
+          d.onclick=ev=>{ev.stopPropagation();chooseTarget(u.id);};
+          if(u.id === (cu.tgt || '')) d.classList.add('target-selected');
+        } else {
+          // 合法单位但阵营不对（提示但不亮）
+          d.classList.add('target-no');
+        }
+      } else if(cu && cu.id === u.id){
+        d.classList.add('target-self');
+        d.title='点击取消选目标';
+        d.onclick=ev=>{ev.stopPropagation();chooseTarget(u.id);};
+      }
+    }
+    return d;
+  };
+  const mkCol=(lbl,side,type)=>{
+    const d=document.createElement('div');d.className='sd';
+    const lr=document.createElement('div');lr.className='rl';lr.textContent=lbl;d.appendChild(lr);
+    const isPet=type==='pet';
+    S.us.filter(u=>u.s===side&&u.ip===isPet).sort((a,b)=>a.position-b.position).forEach(u=>d.appendChild(mkU(u)));
+    return d;
+  };
+  bf.appendChild(mkCol('蓝角(位1-5)','b','char'));
+  bf.appendChild(mkCol('蓝兽(位1-5)','b','pet'));
+  bf.appendChild(mkCol('红兽(位1-5)','r','pet'));
+  bf.appendChild(mkCol('红角(位1-5)','r','char'));
+
+  const r=S.us.filter(u=>u.s==='r'),b=S.us.filter(u=>u.s==='b');
+  document.getElementById('bs').innerHTML=`<div class="sbx r">🔴红: ${r.filter(u=>u.alive).length}/10 · 角${r.filter(u=>!u.ip&&u.alive).length}/5 · 兽${r.filter(u=>u.ip&&u.alive).length}/5</div><div class="sbx b">🔵蓝: ${b.filter(u=>u.alive).length}/10 · 角${b.filter(u=>!u.ip&&u.alive).length}/5 · 兽${b.filter(u=>u.ip&&u.alive).length}/5</div>`;
+  document.getElementById('rN').textContent=S.round;
+  document.getElementById('rN2').textContent=S.round;
+  document.getElementById('dnT').textContent=S.dn==='day'?'☀️ 昼':'🌙 夜';
+  document.getElementById('curP').textContent={setup:'设置',sort:'排序',plan:'规划（暗扣）',resolve:'结算',end:'结束',over:'🏆 结束'}[S.phase] || S.phase;
+  // v1.56：出手顺序条（S.or 时序 1-20 + S.resQ 时序 20+ 复活队列）
+  const ordEl = document.getElementById('orderList');
+  if(ordEl){
+    if(S.or && S.or.length){
+      // 阶段 A：时序 1-20
+      const partA = S.or.map((uid,i) => {
+        const u = S.us.find(x => x.id === uid);
+        let cls = 'future';
+        if(!u || !u.alive) cls = 'dead';
+        if(S.phase === 'resolve' || S.phase === 'end' || S.phase === 'over'){
+          if(i < S.ci) cls = 'done';
+          else if(i === S.ci) cls = 'cur';
+        }
+        const nm = u ? u.nm : '?';
+        const deadTag = (u && !u.alive) ? '💀' : '';
+        const orderNum = i+1;
+        return `<span class="ord-item ${cls}" title="时序 ${orderNum}${u&&!u.alive?'（已阵亡）':''}">${orderNum}.${deadTag}${nm}</span>`;
+      });
+      // 阶段 B：复活队列（时序 20+）
+      const resQ = S.resQ || [];
+      const resQShifted = S.phase === 'resolve' ? S.or.length - (S.ci - (S.or.length - 1) - 1) : 0;  // 已结算的复活者数
+      const partB = resQ.map((uid, i) => {
+        const u = S.us.find(x => x.id === uid);
+        let cls = 'resQ';
+        // 当前是否在该复活者
+        if(S.phase === 'resolve' || S.phase === 'end' || S.phase === 'over'){
+          if(S.ci >= S.or.length){
+            // 在复活队列阶段
+            const doneInResQ = (S.or.length - 1 - S.ci);
+            // S.ci 是当前时序号（1-20），S.or.length - 1 是最后时序号
+            // 实际已结算的复活者数 = S.or.length - S.resQ.length - 1 - (20 - 1) ... 复杂，简化：
+            // 用 resQ.length 变化推算
+            const oriResQLen = resQ.length + (S.resQDoneCount || 0);
+            const curIdxInResQ = oriResQLen - resQ.length;
+            if(i < curIdxInResQ) cls = 'done';
+            else if(i === curIdxInResQ) cls = 'cur';
+          }
+        }
+        const nm = u ? u.nm : '?';
+        const orderNum = 21 + i;
+        return `<span class="ord-item ${cls}" title="复活队列 #${i+1}">${orderNum}.✨${nm}</span>`;
+      });
+      ordEl.innerHTML = partA.join('') + (partB.length ? '<span class="ord-sep">|</span>' + partB.join('') : '');
+      // cur 显示
+      let curUid, curIdxInAll;
+      if(S.ci < S.or.length){
+        curUid = S.or[S.ci];
+        curIdxInAll = S.ci;
+      } else if(S.resQ.length){
+        const resQIdx = (S.resQ.length + (S._resQTotal || S.resQ.length)) - S.resQ.length;
+        // 简化：直接取 resQ[0]（下一个要结算的）
+        curUid = S.resQ[0];
+        curIdxInAll = 20 + (S._resQTotal || S.resQ.length) - S.resQ.length;
+      }
+      const cur = curUid ? S.us.find(x => x.id === curUid) : null;
+      document.getElementById('curOrd').textContent = cur ? `当前: ${cur.nm} (时序 ${curIdxInAll + 1})` : '当前: -';
+    } else {
+      ordEl.innerHTML = '未排序';
+    }
+  }
+}
+
+function openSkillModal(uid){
+  const u = S.us.find(x => x.id === uid);
+  if(!u) return;
+  if(u.ch !== null) return;
+  const m = document.getElementById('mo');
+  // v5：角色职业 = u.cl；召唤兽职业 = u.pt
+  const clsName = u.ip ? u.pt : u.cl;
+  const clsChinese = u.ip
+    ? {physical:'物攻宠', magical:'法攻宠', heal:'治疗宠', seal:'封印宠', defend:'防御宠'}[clsName]
+    : {physical:'物理·风', magical:'法术·火', heal:'治疗·山', seal:'封印·林'}[clsName];
+  // 技能类型图标
+  const typeIcon = {p:'⚔️', m:'🔥', h:'💚', s:'🌿'};
+  const typeName = {p:'物理', m:'法术', h:'治疗', s:'封印'};
+  // 范围描述
+  function rngDesc(sk){
+    if(sk.tgt === 'es') return sk.hit ? `1 目标 ×${sk.hit} 次` : '1 目标';
+    if(sk.tgt === 'as') return sk.hit ? `1 友方 ×${sk.hit} 次` : '1 友方';
+    if(sk.tgt === 'ea') return sk.tgt[0]==='e' ? `1指定 + 2随机 = 3 目标` : `1指定 + 3随机 = 4 友方`;
+    if(sk.tgt === 'aa') return `1指定 + 3随机 = 4 友方（跳满血）`;
+    return sk.tgt;
+  }
+  // 数值描述
+  function dmgDesc(sk){
+    if(sk.typ === 'p') return sk.dmg !== undefined ? `+${sk.dmg} 物理` : '';
+    if(sk.typ === 'm') return sk.dmg !== undefined ? `+${sk.dmg} 法术` : '';
+    if(sk.typ === 'h') return sk.amt !== undefined ? `+${sk.amt} 体力` : '';
+    if(sk.typ === 's') {
+      const k = sk.kind || 'silence';
+      const label = k==='chaos'?'混乱':k==='sleep'?'睡眠':'沉默';
+      return `${label} ${sk.dur} 回合`;
+    }
+    return '';
+  }
+  // 简注
+  function shortDesc(sk){
+    if(sk.typ === 'p' || sk.typ === 'm') {
+      if(sk.tgt[0]==='e' && sk.tgt[1]!=='a') return sk.hit ? `${sk.hit}次单体${typeName[sk.typ]}攻击` : `单体${typeName[sk.typ]}攻击`;
+      if(sk.tgt[0]==='e' && sk.tgt[1]==='a') return `群体${typeName[sk.typ]}攻击`;
+      if(sk.tgt[0]==='a') return `群体${typeName[sk.typ]}治疗`;
+      return `${typeName[sk.typ]}技能`;
+    }
+    if(sk.typ === 'h') return sk.hit ? `多次治疗单体` : `单体治疗`;
+    if(sk.typ === 's') {
+      const k = sk.kind || 'silence';
+      if(k==='chaos') return `混乱状态·每回合随机攻击`;
+      if(k==='sleep') return `睡眠·受击解除`;
+      return `封印·禁止使用技能`;
+    }
+    return '';
+  }
+  // 渲染卡牌
+  const cardsHtml = u.sk.map((s, i) => {
+    return `<div class="sk-card" data-cls="${clsName}" data-idx="${i}" onclick="chooseCard('${uid}', ${i})">
+      <div class="sk-type">${typeIcon[s.typ] || ''} ${clsChinese}</div>
+      <div class="sk-name">${s.n}</div>
+      <div class="sk-rng">${rngDesc(s)}</div>
+      <div class="sk-dmg">${dmgDesc(s)}</div>
+      ${s.typ === 's' ? `<div class="sk-seal-info">${s.kind==='chaos'?'混乱':s.kind==='sleep'?'睡眠':'沉默'} ${s.dur}R</div>` : ''}
+      <div class="sk-desc">${shortDesc(s)}</div>
+    </div>`;
+  }).join('');
+  m.innerHTML = `<div class="mo"><div class="sk-modal">
+    <button class="mo-close" onclick="cancelPending();document.getElementById('mo').innerHTML='';" title="取消（×）">✕</button>
+    <h3>🎯 ${u.nm} · 选 1 个技能（暗扣）</h3>
+    <div class="sk-modal-info">点击卡牌选择 · 选完后再点 1 个目标 · ✕ 或点空白返回</div>
+    <div class="sk-modal-info">该单位属性：力${u.at.str} 智${u.at.int} 体${u.at.sta} 敏${u.at.agi} 耐${u.at.end}</div>
+    <div class="sk-grid">${cardsHtml}</div>
+  </div></div>`;
+}
+
+// v5：选完技能后不立即暗扣，而是进入"待选目标"状态
+function chooseCard(uid, idx){
+  const u = S.us.find(x => x.id === uid);
+  if(!u || u.ch !== null) return;
+  const sk = u.sk[idx];
+  // 关闭弹窗，记录 pending
+  document.getElementById('mo').innerHTML = '';
+  S.pending = {uid, idx, sk};
+  // 提示
+  const targetLabel = sk.tgt[0]==='e' ? '敌方' : '友方';
+  log('lp', `→ ${u.nm} 选了 [${sk.n}] · 请点 1 个${targetLabel}单位作为目标`);
+  render();
+}
+
+// v5：点单位卡选目标（含取消逻辑：再点 pending 单位 = 取消）
+function chooseTarget(tid){
+  if(!S.pending) return;
+  const {uid, idx, sk} = S.pending;
+  const u = S.us.find(x => x.id === uid);
+  const t = S.us.find(x => x.id === tid);
+  if(!u || !t) { S.pending = null; render(); return; }
+  if(!t.alive) return;
+  // 取消：再点自己 = 撤销选择（必须在阵营校验之前）
+  if(t.id === u.id){
+    S.pending = null;
+    log('lp', `↩ 取消 [${sk.n}] 选择 · 重新点单位卡选技能`);
+    render();
+    return;
+  }
+  // 阵营校验
+  const wantEnemy = sk.tgt[0] === 'e';
+  const isEnemy = t.s !== u.s;
+  if(wantEnemy && !isEnemy){ log('le', `❌ 该技能只能指定敌方`); return; }
+  if(!wantEnemy && isEnemy){ log('le', `❌ 该技能只能指定友方`); return; }
+  // 暗扣
+  u.ch = idx;
+  u.tgt = tid;
+  log('ls', `${u.nm} 暗扣 [${sk.n}] → 目标 ${t.nm}`);
+  S.pending = null;
+  // 检查是否全员暗扣完
+  const need = S.us.filter(x => x.alive);
+  if(need.every(x => x.ch !== null)){
+    log('ls', '✓ 所有单位已选 → 立即结算');
+    doResolve();
+    return;
+  }
+  render();
+}
+
+// 取消选目标（弹窗 ✕ 或点空白时调）
+function cancelPending(){
+  if(!S.pending) return;
+  const {uid, sk} = S.pending;
+  const u = S.us.find(x => x.id === uid);
+  S.pending = null;
+  if(u) log('lp', `↩ ${u.nm} 取消选 [${sk.n}]`);
+  render();
+}
+
+function doResolve(){
+  if(S.phase==='over') return;
+  S.phase='resolve';S.ci=0;
+  S._resQTotal = 0;
+  S._resQSorted = false;
+  // 注意：S._origOrder 已经在 doSort 时设过，不重新设（否则 S.or splice 后会丢单位）
+  log('lp',`═══ ④ 结算（ALT 模式 · ${S.dn==='day'?'☀️昼':'🌙夜'}）═══`);
+  log('ls','揭开所有暗扣 → 按顺序 1→20 结算');
+  S.us.filter(u=>!u.ip&&u.alive&&u.ch!==null).forEach(u=>{
+    const s=u.sk[u.ch];
+    log('lsk',`揭开 ${u.nm} → ${s.n}`);
+  });
+  // 同步执行 20 步
+  resNextSync();
+}
+
+// 修复 6：混乱/睡眠/沉默 三种封印分别处理
+// v1.56：分两阶段——先走 S.or（时序 1-20），再走 S.resQ（复活队列）
+function resNextSync(){
+  // 阶段 1：时序 1-20
+  if(S.ci < S.or.length){
+    const uid = S.or[S.ci];
+    const u = S.us.find(x => x.id === uid);
+    if(!u||!u.alive){ S.ci++; return resNextSync(); }
+    return doStep(u);
+  }
+  // 阶段 2：复活队列（时序 20+）
+  if(S.resQ.length > 0){
+    // v1.56 排序：复活者按原时序升序排（先出手的先结算）
+    if(S._resQSorted !== true){
+      S.resQ.sort((a, b) => {
+        // 找原 S.or 位置（用 S._origOrder 记录的初始顺序）
+        const oa = S._origOrder ? S._origOrder.indexOf(a) : 999;
+        const ob = S._origOrder ? S._origOrder.indexOf(b) : 999;
+        return oa - ob;  // 升序
+      });
+      S._resQSorted = true;
+    }
+    // 记录原始 resQ 总长
+    if(!S._resQTotal) S._resQTotal = S.resQ.length;
+    const uid = S.resQ.shift();
+    const u = S.us.find(x => x.id === uid);
+    if(!u || !u.alive){ return resNextSync(); }
+    log('lp',`═══ 时序 ${S.or.length + 1 + ((S._resQTotal || 0) - S.resQ.length - 1)} · 复活者结算 · ${u.nm} ═══`);
+    return doStep(u);
+  }
+  // 都走完才结束
+  doEnd();
+}
+
+// 把单步结算抽出来（时序 1-20 和 20+ 共用）
+// v1.56：复活者也有 ch/tgt（昏厥前暗扣），所以走同样流程
+function doStep(u){
+  // v1.56 时序编号：时序 1-20 = S.ci+1；时序 20+ = 20 + (原始复活队列总长 - 剩余队列长)
+  // 简化：利用 S._resQTotal（doResolve 开头记一下）来算
+  const resQDone = (S._resQTotal || 0) - S.resQ.length;
+  const stepNum = S.ci < S.or.length ? (S.ci + 1) : (S.or.length + 1 + resQDone);
+
+  // 修复 6：混乱状态——每大轮自动随机攻击 1 单位（v1.53 §6.4.3 拍板）
+  if(u.sealType === 'chaos' && !u.ip){
+    // 混乱：每回合自动攻击 1 个单位
+    const allUnits = S.us.filter(x => x.alive);
+    if(allUnits.length > 0){
+      const tgt = allUnits[Math.floor(Math.random() * allUnits.length)];
+      // 物理攻击：力量 - 耐力 + 0（混乱伤害不享受技能加成）
+      const dmg = Math.max(1, u.at.str - tgt.at.end);
+      tgt.hp = Math.max(0, tgt.hp - dmg);
+      log('ld',`#${stepNum} 混乱·${u.nm}→${tgt.nm} -${dmg} 物(混乱) → HP ${tgt.hp}/${tgt.mhp}`);
+      chkD(tgt);
+    }
+    u.sl--;
+    stepNext();
+    return;
+  }
+
+  // 沉默/睡眠：跳过（不能使用技能）
+  if(u.sl > 0 && !u.ip){
+    log('lsk',`#${stepNum} ${u.nm} 被${u.sealType==='sleep'?'睡眠':'沉默'}(剩${u.sl})，跳过`);
+    u.sl--;
+    stepNext();
+    return;
+  }
+
+  // 召唤兽：被封也跳过（沉默/睡眠/混乱）
+  if(u.sl > 0 && u.ip){
+    log('lsk',`#${stepNum} ${u.nm}(兽) 被${u.sealType||'沉默'}，跳过`);
+    u.sl--;
+    stepNext();
+    return;
+  }
+
+  // 召唤兽行动 — 使用玩家指定的目标
+  if(u.ip){
+    if(u.ch === null || !u.tgt){ stepNext(); return; }
+    autoPet(u);
+    stepNext();
+    return;
+  }
+
+  // 角色没选技能
+  if(u.ch === null || !u.tgt){
+    stepNext();
+    return;
+  }
+
+  // 角色用玩家指定的目标
+  const sk = u.sk[u.ch];
+  const tgt = S.us.find(x => x.id === u.tgt && x.alive);
+  if(!tgt){ stepNext(); return; }
+  const pool = S.us.filter(x => x.alive && x.id !== tgt.id && (sk.tgt[0]==='e' ? x.s!==u.s : x.s===u.s));
+
+  // 修复 2：d10 + mod n + 1 群体算法
+  let rnd = [];
+  if(sk.tgt[1]==='a'){
+    const rndN = sk.tgt[0]==='e' ? 2 : 3;
+    rnd = groupRandom(pool, rndN);
+  }
+  execSK(u, sk, tgt, rnd);
+  stepNext();
+}
+
+// v1.56：单步推进 = 时序 ci++ 或 复活队列 shift
+// 是否继续由 resNextSync 决定
+function stepNext(){
+  S.ci++;
+  if(S.phase!=='over') resNextSync();
+}
+
+// 修复 2：群体随机算法 d10 + mod n + +1（v1.50.1 拍板）
+function groupRandom(pool, n){
+  if(pool.length <= n) return pool.slice();
+  const result = [];
+  const used = new Set();
+  for(let i = 0; i < n; i++){
+    // 投 d10
+    const d10 = Math.floor(Math.random() * 10) + 1;  // 1-10
+    // 取 mod n + 1
+    let idx = (d10 % n) + 1;
+    // 跳过已用的
+    let attempts = 0;
+    while(used.has(idx) && attempts < n * 2){
+      idx = (idx % n) + 1;
+      attempts++;
+    }
+    used.add(idx);
+    if(pool[idx-1]) result.push(pool[idx-1]);
+  }
+  return result;
+}
+
+function autoPet(u){
+  const sk = u.sk[0];
+  const t = S.us.find(x => x.id === u.tgt && x.alive);
+  if(!t) return;
+  if(sk.typ==='p'||sk.typ==='m'){
+    const d = sk.typ==='p' ? Math.max(1, u.at.str - t.at.end + sk.dmg) : Math.max(1, u.at.int - t.at.int + sk.dmg);
+    t.hp=Math.max(0,t.hp-d);
+    log('ld',`#${S.or.indexOf(u.id)+1} ${u.nm}→${t.nm} -${d} → HP ${t.hp}/${t.mhp}`);
+    chkD(t);
+  } else if(sk.typ==='h'){
+    if(!t.alive && t.hp > 0){ resurrect(t, t.hp + sk.amt); }
+    t.hp=Math.min(t.mhp,t.hp+sk.amt);
+    log('lh',`#${S.or.indexOf(u.id)+1} ${u.nm}→${t.nm} +${sk.amt} → HP ${t.hp}/${t.mhp}`);
+  } else if(sk.typ==='s'){
+    t.sl += sk.dur;
+    t.sealType = sk.kind || 'silence';
+    log('lsk',`#${S.or.indexOf(u.id)+1} ${u.nm}→${t.nm} ${t.sealType==='chaos'?'混乱':t.sealType==='sleep'?'睡眠':'沉默'}${sk.dur}回合`);
+  } else if(sk.typ==='d'){
+    // v5：防御宠 — 用玩家指定的目标
+    t.sh += sk.amt;
+    log('lh',`#${S.or.indexOf(u.id)+1} ${u.nm}→${t.nm} +${sk.amt} 护盾`);
+  }
+}
+
+function execSK(u,sk,tgt,rnd){
+  const all=[tgt,...rnd];
+  if(sk.typ==='p'||sk.typ==='m'){
+    all.forEach(t=>{if(!t.alive)return;
+      const hits=sk.hit||1;
+      for(let h=0;h<hits;h++){
+        if(!t.alive)break;
+        let dmg = sk.dmg;
+        if(t.sh>0){
+          const abs = Math.min(t.sh, dmg);
+          t.sh -= abs; dmg -= abs;
+          if(abs>0) log('lh',`  ${t.nm} 盾吸收 ${abs}`);
+        }
+        if(dmg>0){
+          const real = sk.typ==='p' ? Math.max(1, u.at.str - t.at.end + dmg) : Math.max(1, u.at.int - t.at.int + dmg);
+          t.hp=Math.max(0,t.hp-real);
+          log('ld',`  ${u.nm}→${t.nm} -${real} (${sk.typ==='p'?'物':'法'}) (${h+1}/${hits}) → HP ${t.hp}/${t.mhp}`);
+          chkD(t);
+        }
+      }
+    });
+  } else if(sk.typ==='h'){
+    all.forEach(t=>{if(!t.alive)return;
+      const hits=sk.hit||1;
+      for(let h=0;h<hits;h++){
+        if(t.hp>=t.mhp){log('ls',`  ${t.nm} 满血跳过`);break;}
+        if(!t.alive && t.hp > 0){ resurrect(t, t.hp + sk.amt); }
+        t.hp=Math.min(t.mhp,t.hp+sk.amt);
+        log('lh',`  ${u.nm}→${t.nm} +${sk.amt} (${h+1}/${hits}) → HP ${t.hp}/${t.mhp}`);
+      }
+    });
+  } else if(sk.typ==='s'){
+    all.forEach(t=>{if(!t.alive)return;
+      t.sl += sk.dur;
+      t.sealType = sk.kind || 'silence';
+      const label = t.sealType==='chaos'?'混乱':t.sealType==='sleep'?'睡眠':'沉默';
+      log('lsk',`  ${u.nm}→${t.nm} ${label}${sk.dur}回合`);
+    });
+  }
+  u.ch=null;
+}
+
+function chkD(u){
+  if(u.hp<=0&&u.alive){
+    u.alive=false;u.hp=0;
+    log('ls',`💀 ${u.nm} 阵亡`);
+    chkW();
+  }
+}
+
+// v1.56：复活 → 从 S.or 移除，追加到复活队列 S.resQ
+// 多个复活者：按原时序顺序（不加 d2）
+// 时序走完 1-20 后才结算复活队列
+function resurrect(u, hpVal){
+  if(u.alive) return;
+  u.alive = true;
+  u.hp = Math.max(1, hpVal || u.mhp);
+  u.sl = 0; u.sealType = null;  // 复活清除所有状态
+  // 从 S.or 移除
+  const idx = S.or.indexOf(u.id);
+  if(idx >= 0) S.or.splice(idx, 1);
+  // 追加入复活队列（按原顺序追加 = 昏厥前 S.or 位置靠前的先入队）
+  S.resQ.push(u.id);
+  log('ls',`✨ ${u.nm} 复活 · 入复活队列 #${S.resQ.length}（时序 20+ 之后结算）· HP ${u.hp}/${u.mhp}`);
+  render();
+}
+
+function chkW(){
+  const r=S.us.filter(u=>u.s==='r'&&u.alive),b=S.us.filter(u=>u.s==='b'&&u.alive);
+  if(r.length===0||b.length===0){
+    log('lw',`🏆 第 ${S.round} 回合 · ${r.length===0?'蓝方':'红方'} 获胜！`);
+    S.phase='over';
+    render();
+    return true;
+  }
+  return false;
+}
+
+// 修复 4：昼夜系统（v1.52 §4.5）
+// 修复 5：调息状态（v1.52 §5.7）
+function doEnd(){
+  S.phase='end';
+  log('lp',`═══ ⑤ 结束阶段（${S.dn==='day'?'☀️昼':'🌙夜'}）═══`);
+
+  // 步骤① 持续伤害结算（v1.52 §4.4 步骤①）—— v1.53 无持续伤害，跳过
+  // 步骤② 胜负判定（chkW 在 chkD 内已调）
+
+  // 步骤③ 胜负已分时跳过后续
+  if(S.phase==='over'){
+    log('ls','游戏结束');
+    render();
+    return;
+  }
+
+  // 步骤④ 昼夜更替（v1.52 §4.4 步骤③ + §4.5）
+  const oldDn = S.dn;
+  S.dn = S.dn==='day'?'night':'day';
+  log('ls',`昼夜：${oldDn==='day'?'☀️':'🌙'} → ${S.dn==='day'?'☀️':'🌙'}`);
+
+  // 修复 4：清除所有单位标记堆叠中最顶层的当前昼夜标记
+  // 修复 5：调息 = 2 个调息标记（1 昼 + 1 夜），跟昼夜同步清除
+  S.us.forEach(u=>{
+    if(u.tzMarks && u.tzMarks.length > 0){
+      const top = u.tzMarks[u.tzMarks.length - 1];
+      if(top.dn === oldDn){
+        u.tzMarks.pop();
+        if(top.kind === 'tune'){
+          log('lsk',`  ${u.nm} 调息标记清除1个（剩${u.tzMarks.length}）`);
+        }
+      }
+    }
+  });
+
+  // 步骤⑤ 封印 -1 回合（v1.52 §4.4 步骤④）
+  S.us.forEach(u=>{
+    if(u.sl>0){
+      u.sl--;
+      if(u.sl===0) u.sealType = null;
+    }
+  });
+  log('ls','所有封印-1回合');
+
+  // 步骤⑥ 技能卡回技能书（v1.53 占位·无冷却技能立即回）
+
+  // 步骤⑦ 进入下一回合
+  S.round++;
+  S.phase='plan';
+  S.us.forEach(u=>{u.ch=null;u.tgt=null;});
+  S.resQ = [];  // v1.56：复活队列清空（每回合重置）
+  // v1.56：顺序只排 1 次。死掉的单位跳过，复活者走 resQ 队列。
+  // 不重排。如果需要重排（加/减速），走专门的 reorder 函数。
+  log('lp',`═══ 第 ${S.round} 回合 · ${S.dn==='day'?'☀️昼':'🌙夜'} · 规划阶段 ═══`);
+  log('ls','双方继续暗扣技能...');
+  render();
+}
+
+// 同步自动打完一局
+function autoNext(){
+  if(S.phase==='over') return {rounds: S.round, phase: S.phase};
+  let safety = 0;
+  while(S.phase!=='over' && safety < 500){
+    safety++;
+    if(S.phase==='plan'){
+      S.us.filter(u=>u.alive&&u.ch===null).forEach(u=>{
+        // v5：autoNext 给所有单位（角色+召唤兽）随机选技能 + 目标
+        u.ch = u.ip ? 0 : Math.floor(Math.random()*u.sk.length);
+        const sk = u.sk[u.ch];
+        // 随机选合法目标
+        const pool = S.us.filter(x => x.alive && x.id !== u.id && (sk.tgt[0]==='e' ? x.s!==u.s : x.s===u.s));
+        if(pool.length){
+          u.tgt = pool[Math.floor(Math.random()*pool.length)].id;
+        }
+      });
+      S.phase='resolve'; S.ci=0;
+      log('lp',`═══ ④ 结算（ALT 模式 · ${S.dn==='day'?'☀️昼':'🌙夜'}）═══`);
+      log('ls','揭开所有暗扣 → 按敏捷顺序 1→20 结算');
+      S.us.filter(u=>!u.ip&&u.alive&&u.ch!==null).forEach(u=>{
+        const s=u.sk[u.ch]; log('lsk',`揭开 ${u.nm} → ${s.n}`);
+      });
+      resNextSync();
+      continue;
+    }
+    if(S.phase==='end'){
+      doEnd();
+      continue;
+    }
+    if(S.phase==='resolve'){
+      // 有可能 plan→resolve 后 phase 已变，但 resNextSync 没调——防御性补调
+      if(S.ci < S.or.length){
+        resNextSync();
+      } else {
+        doEnd();
+      }
+      continue;
+    }
+  }
+  render();
+  return {rounds: S.round, phase: S.phase, loops: safety};
+}
+
+function exportLog(){
+  const text = document.getElementById('log').innerText;
+  navigator.clipboard.writeText(text).then(()=>alert('已复制到剪贴板'));
+}
+
+newGame();
+</script>
+</body>
+</html>
